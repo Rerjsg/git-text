@@ -14,6 +14,8 @@ r3_cx = cx
 r3_cy = cy + h2//2+h3//2
 a1 = aircraft.Aircraft(cx, cy)
 
+# selected_plane = None
+
 
 def mouse_event(event, x, y, flags, param):
     if event == cv2.EVENT_LBUTTONDOWN:
