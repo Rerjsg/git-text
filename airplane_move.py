@@ -1,6 +1,9 @@
 import cv2
 import numpy as np
+import aircraft
 
+
+airplanes = []
 center_x, center_y = 400, 400
 h1, w1 = 80, 200
 h2, w2 = 150, 60
@@ -9,28 +12,23 @@ cx = center_x
 cy = center_y
 r3_cx = cx
 r3_cy = cy + h2//2+h3//2
+a1 = aircraft.Aircraft(cx, cy)
+a2 = aircraft.Aircraft(500, 400)
+
+
+def mouse_event(event, x, y, flags, param):
+    if event == cv2.EVENT_LBUTTONDOWN:
+        airplanes.append(aircraft.Aircraft(x, y))
+
+
+cv2.namedWindow("Plane")
+cv2.setMouseCallback("Plane", mouse_event)
 
 while True:
     img = np.zeros((800, 800, 3), dtype=np.uint8)
+    for plane in airplanes:
+        plane.draw(img)
 
-    r1_1 = (cx-w1//2, cy - h1//2)
-    r1_2 = (cx+w1//2, cy + h1//2)
-    r2_1 = (cx-w2//2, cy-h2//2)
-    r2_2 = (cx+w2//2, cy+h2//2)
-    r3_1 = (r3_cx-w3//2, r3_cy-h3//2)
-    r3_2 = (r3_cx+w3//2, r3_cy+h3//2)
-    # a3 = (cx, cy+3*h3//2)
-    # d = h3*3//2
-    # d1 = (-d, cy)
-    # a4 = (-d-w3//2, cy-h3//2)
-    # a5 = (-d+w3//2, cy+h3//2)
-
-    cv2.rectangle(img, r1_1, r1_2, (230, 216, 173), -1)
-    cv2.rectangle(img, r2_1, r2_2, (230, 216, 173), -1)
-    cv2.rectangle(img, r3_1, r3_2, (230, 216, 173), -1)
-    cv2.rectangle(img, r1_1, r1_2, (193, 182, 255), 2)
-    cv2.rectangle(img, r2_1, r2_2, (193, 182, 255), 2)
-    cv2.rectangle(img, r3_1, r3_2, (193, 182, 255), 2)
     cv2.imshow("Plane", img)
 
     key = cv2.waitKey(20) & 0xFF
