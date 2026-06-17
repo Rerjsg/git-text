@@ -13,7 +13,6 @@ cy = center_y
 r3_cx = cx
 r3_cy = cy + h2//2+h3//2
 a1 = aircraft.Aircraft(cx, cy)
-a2 = aircraft.Aircraft(500, 400)
 
 
 def mouse_event(event, x, y, flags, param):
@@ -33,25 +32,11 @@ while True:
 
     key = cv2.waitKey(20) & 0xFF
 
-    if key == ord('w'):
+    if len(airplanes) > 0:
+        airplanes[-1].spin(key)
 
-        r3_cx = cx
-        r3_cy = cy + h2//2+h3//2
-    elif key == ord('s'):
-        r3_cx = cx
-        r3_cy = cy - h2//2-h3//2
-    elif key == ord('a'):
-        h1, w1 = w1, h1
-        h2, w2 = w2, h2
-        h3, w3 = w3, h3
-        r3_cx = cx + h2//2+h3//2
-        r3_cy = cy
-
-    elif key == ord('d'):
-
-        r3_cx = cx - h2//2-h3//2
-        r3_cy = cy
-    elif key == 27:
+    if key == 27:
         break
+
 
 cv2.destroyAllWindows()

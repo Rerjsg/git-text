@@ -31,3 +31,24 @@ class Aircraft:
     # def mouse_event(self, event):
     #     if event == cv2.EVENT_LBUTTONDOWN:
     #         airplanes.append((self.cx, self.cy))
+
+    def spin(self, key):
+
+        if key == ord('w'):
+
+            self.r3_cx = self.cx
+            self.r3_cy = self.cy + self.h2//2+self.h3//2
+        elif key == ord('s'):
+            self.r3_cx = self.cx
+            self.r3_cy = self.cy - self.h2//2-self.h3//2
+        elif key == ord('a'):
+            self.h1, self.w1 = self.w1, self.h1
+            self.h2, self.w2 = self.w2, self.h2
+            self.h3, self.w3 = self.w3, self.h3
+            self.r3_cx = self.cx + self.h2//2+self.h3//2
+            self.r3_cy = self.cy
+
+        elif key == ord('d'):
+
+            self.r3_cx = self.cx - self.h2//2-self.h3//2
+            self.r3_cy = self.cy
