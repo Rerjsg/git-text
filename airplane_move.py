@@ -1,20 +1,11 @@
 import cv2
 import numpy as np
 import aircraft
+import bullet
 
 
 airplanes = []
-center_x, center_y = 400, 400
-h1, w1 = 80, 200
-h2, w2 = 150, 60
-h3, w3 = 60, 100
-cx = center_x
-cy = center_y
-r3_cx = cx
-r3_cy = cy + h2//2+h3//2
-a1 = aircraft.Aircraft(cx, cy)
-
-# selected_plane = None
+bullets = []
 
 
 def mouse_event(event, x, y, flags, param):
@@ -27,7 +18,23 @@ cv2.setMouseCallback("Plane", mouse_event)
 
 while True:
     img = np.zeros((800, 800, 3), dtype=np.uint8)
+
+    for b in bullets:
+        b.move()
+        b.draw(img)
     for plane in airplanes:
+        if plane.direction == 'w':
+            plane.cy -= 6
+            plane.r3_cy -= 6
+        elif plane.direction == 's':
+            plane.cy += 6
+            plane.r3_cy += 6
+        elif plane.direction == 'a':
+            plane.cx -= 6
+            plane.r3_cx -= 6
+        elif plane.direction == 'd':
+            plane.cx += 6
+            plane.r3_cx += 6
         plane.draw(img)
 
     cv2.imshow("Plane", img)
@@ -37,6 +44,10 @@ while True:
     if len(airplanes) > 0:
         airplanes[-1].spin(key)
 
+    if key == ord(' ') and len(airplanes) > 0:
+        plane = airplanes[-1]
+
+        bullets.append(bullet.Bullet(plane.cx, plane.cy, plane.direction))
     if key == 27:
         break
 
