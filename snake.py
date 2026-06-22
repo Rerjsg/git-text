@@ -1,6 +1,10 @@
+
+from food import Food
+
+
 class Snake:
 
-    def __init__(self):
+    def __init__(self) -> None:
 
         self.size = 20
 
@@ -13,7 +17,7 @@ class Snake:
         self.dx = self.size
         self.dy = 0
 
-    def move(self):
+    def move(self) -> None:
 
         head_x = self.body[0][0] + self.dx
         head_y = self.body[0][1] + self.dy
@@ -22,18 +26,18 @@ class Snake:
 
         self.body.pop()
 
-    def grow(self):
+    def grow(self) -> None:
 
         tail = self.body[-1]
         self.body.append(tail.copy())
 
-    def eat_food(self, food):
+    def eat_food(self, food: Food) -> bool:
 
         head = self.body[0]
 
         return head[0] == food.x and head[1] == food.y
 
-    def hit_self(self):
+    def hit_self(self) -> bool:
 
         head = self.body[0]
 

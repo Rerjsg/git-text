@@ -3,7 +3,7 @@ import random
 
 class Food:
 
-    def __init__(self, width, height, size):
+    def __init__(self, width: int, height: int, size: int) -> None:
         self.width = width
         self.height = height
         self.size = size
@@ -13,6 +13,6 @@ class Food:
 
         self.random_pos()
 
-    def random_pos(self):
+    def random_pos(self) -> None:
         self.x = random.randrange(0, self.width // self.size) * self.size
         self.y = random.randrange(0, self.height // self.size) * self.size
