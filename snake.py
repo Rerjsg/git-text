@@ -26,10 +26,11 @@ class Snake:
 
         self.body.pop()
 
-    def grow(self) -> None:
+    def grow(self, length: int) -> None:
 
         tail = self.body[-1]
-        self.body.append(tail.copy())
+        for i in range(length):
+            self.body.append(tail.copy())
 
     def eat_food(self, food: Food) -> bool:
 

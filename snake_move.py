@@ -20,6 +20,15 @@ while True:
 
     key = cv2.waitKey(100)
 
+    if food.value == 1:
+        color = (0, 225, 0)
+        big = 10
+    elif food.value == 2:
+        color = (0, 255, 255)
+        big = 20
+    elif food.value == 3:
+        color = (0, 0, 255)
+        big = 30
     if key == ord('w'):
         snake.dx = 0
         snake.dy = -SIZE
@@ -43,7 +52,7 @@ while True:
 
     if snake.eat_food(food):
 
-        snake.grow()
+        snake.grow(food.value)
 
         food.random_pos()
 
@@ -66,8 +75,9 @@ while True:
         img,
         (food.x + SIZE // 2, food.y + SIZE // 2),
         SIZE // 2,
-        (0, 0, 255),
-        -1
+        color,
+        big
+        - 1
     )
 
     cv2.imshow("Snake", img)
