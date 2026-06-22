@@ -2,22 +2,32 @@ import cv2
 import numpy as np
 import aircraft
 import bullet
+import enemy
+import random
 
 
 airplanes = []
 bullets = []
+enemies = []
+
+for i in range(5):
+    e = enemy.Enemy(random.randrange(100, 700), random.randrange(100, 500))
+    enemies.append(e)
 
 
-def mouse_event(event, x, y, flags, param):
+def mouse_event(event: int, x: int, y: int, flags, param) -> None:
     if event == cv2.EVENT_LBUTTONDOWN:
         airplanes.append(aircraft.Aircraft(x, y))
 
 
 cv2.namedWindow("Plane")
 cv2.setMouseCallback("Plane", mouse_event)
-
+a = enemy.Enemy(200, 300)
 while True:
-    img = np.zeros((800, 800, 3), dtype=np.uint8)
+    img = np.zeros((800, 1600, 3), dtype=np.uint8)
+    img[:] = 0
+    for e in enemies:
+        e.draw(img)
 
     for b in bullets:
         b.move()
@@ -41,6 +51,15 @@ while True:
 
     key = cv2.waitKey(20) & 0xFF
 
+    for b in bullets[:]:
+        for e in enemies[:]:
+            if e.hit(b):
+                bullets.remove(b)
+                enemies.remove(e)
+                new_enemy = enemy.Enemy(0, 0)
+                new_enemy.random_pos()
+                enemies.append(new_enemy)
+                break
     if len(airplanes) > 0:
         airplanes[-1].spin(key)
 
