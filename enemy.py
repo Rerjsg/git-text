@@ -13,6 +13,8 @@ class Enemy:
         self.cy = centrey
         self.r3_cx = centrex
         self.r3_cy = centrey + self.h2//2+self.h3//2
+        self.dx = random.choice([-3, 3])
+        self.dy = random.choice([-3, 3])
 
     def draw(self, img) -> None:
         r1_1 = (self.cx-self.w1//2, self.cy - self.h1//2)
@@ -22,12 +24,12 @@ class Enemy:
         r3_1 = (self.r3_cx-self.w3//2, self.r3_cy-self.h3//2)
         r3_2 = (self.r3_cx+self.w3//2, self.r3_cy+self.h3//2)
 
-        cv2.rectangle(img, r1_1, r1_2, (230, 216, 173), -1)
-        cv2.rectangle(img, r2_1, r2_2, (230, 216, 173), -1)
-        cv2.rectangle(img, r3_1, r3_2, (230, 216, 173), -1)
-        cv2.rectangle(img, r1_1, r1_2, (193, 182, 255), 2)
-        cv2.rectangle(img, r2_1, r2_2, (193, 182, 255), 2)
-        cv2.rectangle(img, r3_1, r3_2, (193, 182, 255), 2)
+        cv2.rectangle(img, r1_1, r1_2, (0, 255, 255), -1)
+        cv2.rectangle(img, r2_1, r2_2, (0, 255, 255), -1)
+        cv2.rectangle(img, r3_1, r3_2, (0, 255, 255), -1)
+        cv2.rectangle(img, r1_1, r1_2, (255, 0, 255), 2)
+        cv2.rectangle(img, r2_1, r2_2, (255, 0, 255), 2)
+        cv2.rectangle(img, r3_1, r3_2, (255, 0, 255), 2)
 
     def random_pos(self) -> None:
         self.cx = random.randrange(50, 1550)
@@ -42,3 +44,26 @@ class Enemy:
         bottom = self.r3_cy + self.h3//2
 
         return (left <= bullet.bx <= right and top <= bullet.by <= bottom)
+
+    def move(self) -> None:
+        self.cx += self.dx
+        self.cy += self.dy
+
+        if self.cx < 50:
+            self.cx = 50
+            self.dx = -self.dx
+
+        if self.cx > 1550:
+            self.cx = 1550
+            self.dx = -self.dx
+
+        if self.cy < 50:
+            self.cy = 50
+            self.dy = -self.dy
+
+        if self.cy > 700:
+            self.cy = 700
+            self.dy = -self.dy
+
+        self.r3_cx = self.cx
+        self.r3_cy = self.cy + self.h2//2 + self.h3//2

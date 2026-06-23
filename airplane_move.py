@@ -9,8 +9,9 @@ import random
 airplanes = []
 bullets = []
 enemies = []
+enemy_bullets = []
 
-for i in range(5):
+for i in range(3):
     e = enemy.Enemy(random.randrange(100, 700), random.randrange(100, 500))
     enemies.append(e)
 
@@ -28,10 +29,29 @@ while True:
     img[:] = 0
     for e in enemies:
         e.draw(img)
+        if random.randint(1, 50) == 1:
+            enemy_bullets.append(
+                (bullet.Bullet(e.cx, e.cy, random.choice(['w', 'a', 's', 'd']))))
+
+    for e in enemies:
+        e.move()
+        e.draw(img)
+
+    for eb in enemy_bullets:
+        eb.move()
+        eb.draw(img)
 
     for b in bullets:
         b.move()
         b.draw(img)
+    for eb in enemy_bullets[:]:
+        for plane in airplanes[:]:
+            if (plane.cx - 50 <= eb.bx <= plane.cx + 50 and plane.cy-50 <= eb.by <= plane.cy + 50):
+                print("Game Over")
+                enemy_bullets.remove(eb)
+                airplanes.remove(plane)
+                break
+
     for plane in airplanes:
         if plane.direction == 'w':
             plane.cy -= 6
