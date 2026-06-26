@@ -1,4 +1,4 @@
-
+from collections import Counter
 
 with open("article.txt", "r", encoding="utf-8")as f:
     text = f.read()
@@ -12,15 +12,8 @@ wordss = [text[i:i+3] for i in range(len(text)-2)]
 # print(words)
 
 
-def times(words: list[str]) -> dict[str, int]:
-    words_time = {}
-    for w in words:
-        if w in words_time:
-            words_time[w] += 1
-        else:
-            words_time[w] = 1
-    return words_time
-
+word_count = Counter(words)
+char_count = Counter(text)
 
 # print(times(wordss))
 
@@ -33,17 +26,24 @@ def probability(word_count: dict[str, int]) -> dict[str, float]:
     return pro
 
 
-word_count = times(words)
 pro = probability(word_count)
 # print(pro)
+char_total = len(text)
+char_pro = {}
+for c, count in char_count.items():
+    char_pro[c] = count / char_total
 
 
 def high_probability(pro: dict[str, float], threshold: float) -> dict[str, float]:
     high_words = {}
 
-    for word, p in pro.items():
-        if p >= threshold:
-            high_words[word] = p
+    for word, p_xy in pro.items():
+        x = word[0]
+        y = word[1]
+        p_x = char_pro[x]
+        p_y = char_pro[y]
+        if p_xy > p_x*p_y:
+            high_words[word] = p_xy
 
     return high_words
 
