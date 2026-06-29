@@ -1,6 +1,8 @@
+import math
 from collections import Counter
+import pandas as pd
 
-with open("article.txt", "r", encoding="utf-8")as f:
+with open("The Great Gatsby.txt", "r", encoding="utf-8")as f:
     text = f.read()
 
 word = list(text)
@@ -42,17 +44,20 @@ def high_probability(pro: dict[str, float], threshold: float) -> dict[str, float
         y = word[1]
         p_x = char_pro[x]
         p_y = char_pro[y]
-        if p_xy > p_x*p_y:
-            high_words[word] = p_xy
+        pmi = math.log2(p_xy/(p_x*p_y))
+        if pmi >= threshold:
+            high_words[word] = pmi
 
     return high_words
 
 
-threshold = 0.0019
+threshold = 3
 
 high_words = high_probability(pro, threshold)
 
-print(high_words)
+result = sorted(high_words.items(), key=lambda x: x[1], reverse=True)
+print(result[50:100])
+
 
 trie = {}
 
@@ -127,4 +132,4 @@ def find_words(text: str) -> list[str]:
     return find
 
 
-print(find_words(text))
+# print(find_words(text))
