@@ -1,27 +1,6 @@
-words = {
-    "中国": 100,
-    "中": 10,
-    "科学": 90,
-    "科学院": 80,
-    "学院": 60,
-    "计算": 70,
-    "技术": 70,
-    "研究": 60,
-    "研究所": 90,
-    "人工": 40,
-    "人工智能": 100,
-    "智能": 50,
-    "实验": 40,
-    "实验室": 90,
-    "发布": 70,
-    "大规模": 80,
-    "规模": 30,
-    "语言": 60,
-    "语言模型": 100,
-    "模型": 50,
-    "研究报告": 95,
-    "报告": 60
-}
+import json
+with open("dictionary.json", "r", encoding="utf-8") as f:
+    words = json.load(f)
 
 trie = {}
 
@@ -38,16 +17,12 @@ def insert(trie, word, weight):
     node["#"] = weight
 
 
-for word, weight in words.items():
-    insert(trie, word, weight)
-
-
 def search(trie, text, start):
     node = trie
     result = []
     i = start
 
-    while i < len(text):
+    while i < len(text) and i - start < 4:
         w = text[i]
 
         if w not in node:
@@ -56,8 +31,7 @@ def search(trie, text, start):
         node = node[w]
 
         if "#" in node:
-            word = text[start:i+1]
-            result.append((word, node["#"]))
+            result.append((text[start:i+1], node["#"]))
 
         i += 1
 
@@ -73,8 +47,10 @@ def find_words(text):
         n = []
 
         for v, k in search(trie, text, i):
-            weight = k + len(v) * 20
+            # weight = k / (len(v) ** 0.5)
+            weight = k
             n.append((weight, v))
+            print(f"{v},{k},{weight}")
 
         if n:
 
@@ -82,7 +58,7 @@ def find_words(text):
                 find.append(unknow)
                 unknow = ""
 
-            best_word = max(n)[1]
+            best_word = max(n, key=lambda x: x[0])[1]
             find.append(best_word)
             i += len(best_word)
 
@@ -96,6 +72,11 @@ def find_words(text):
     return find
 
 
-print(find_words("hhh中国科学院hhhaaa报告kkk人工智能"))
-print(search(trie, "hhh中国科学院hhhaaa报告kkk人工智能", 3))
-print(trie)
+for word, weight in words.items():
+    insert(trie, word, weight)
+
+print(search(trie, '匆匆忙忙', 0))
+
+print(find_words("汽车路匆匆忙忙跟铁路会合"))
+print("匆匆忙忙" in words)
+print(words.get("匆匆忙忙"))
