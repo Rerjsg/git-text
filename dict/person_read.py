@@ -1,6 +1,6 @@
 import math
 from collections import Counter
-import pandas as pd
+from collections import defaultdict
 
 with open("The Great Gatsby.txt", "r", encoding="utf-8")as f:
     text = f.read()
@@ -19,6 +19,16 @@ char_count = Counter(text)
 
 # print(times(wordss))
 
+left_neighbors = defaultdict(list)
+right_neighbors = defaultdict(list)
+
+for i in range(len(text) - 1):
+    word = text[i:i+2]
+    if i > 0:
+        left_neighbors[word].append(text[i-1])
+    if i+2 < len(text):
+        right_neighbors[word].append(text[i+2])
+
 
 def probability(word_count: dict[str, int]) -> dict[str, float]:
     total = len(words)
@@ -36,7 +46,22 @@ for c, count in char_count.items():
     char_pro[c] = count / char_total
 
 
-def high_probability(pro: dict[str, float], threshold: float) -> dict[str, float]:
+def entropy(chars):
+    if not chars:
+        return 0
+
+    count = Counter(chars)
+    total = len(chars)
+
+    h = 0
+
+    for c in count.values():
+        p = c/total
+        h -= p*math.log2(p)
+    return h
+
+
+def high_probability(pro: dict[str, float], pmi_threshold, entropy_threshold) -> dict[str, float]:
     high_words = {}
 
     for word, p_xy in pro.items():
@@ -45,18 +70,27 @@ def high_probability(pro: dict[str, float], threshold: float) -> dict[str, float
         p_x = char_pro[x]
         p_y = char_pro[y]
         pmi = math.log2(p_xy/(p_x*p_y))
-        if pmi >= threshold:
+
+        left = entropy(left_neighbors[word])
+        right = entropy(right_neighbors[word])
+
+        if (
+            pmi >= pmi_threshold
+            and left >= entropy_threshold
+            and right >= entropy_threshold
+        ):
             high_words[word] = pmi
 
     return high_words
 
 
-threshold = 3
+pmi_threshold = 3
+entropy_threshold = 1
 
-high_words = high_probability(pro, threshold)
+high_words = high_probability(pro, pmi_threshold, entropy_threshold)
 
-result = sorted(high_words.items(), key=lambda x: x[1], reverse=True)
-print(result[50:100])
+# result = sorted(high_words.items(), key=lambda x: x[1], reverse=True)
+# print(result[50:100])
 
 
 trie = {}
@@ -132,4 +166,4 @@ def find_words(text: str) -> list[str]:
     return find
 
 
-# print(find_words(text))
+print(find_words(text))
