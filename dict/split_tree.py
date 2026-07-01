@@ -1,4 +1,5 @@
 import json
+import math
 with open("dictionary.json", "r", encoding="utf-8") as f:
     words = json.load(f)
 
@@ -47,8 +48,8 @@ def find_words(text):
         n = []
 
         for v, k in search(trie, text, i):
-            # weight = k / (len(v) ** 0.5)
-            weight = k
+            weight = k + math.log2(len(v))
+
             n.append((weight, v))
             print(f"{v},{k},{weight}")
 
@@ -75,8 +76,9 @@ def find_words(text):
 for word, weight in words.items():
     insert(trie, word, weight)
 
-print(search(trie, '匆匆忙忙', 0))
+# print(search(trie, '匆匆忙忙', 0))
 
-print(find_words("汽车路匆匆忙忙跟铁路会合"))
-print("匆匆忙忙" in words)
-print(words.get("匆匆忙忙"))
+print(find_words("支支吾吾"))
+print("地" in words)
+# print("匆匆忙忙" in words)
+# print(words.get("匆匆忙忙"))

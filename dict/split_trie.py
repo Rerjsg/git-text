@@ -89,6 +89,18 @@ def calc_pmi(word, pro):
 
 def high_probability(pro, pmi_threshold, entropy_threshold):
 
+    stop_char = {
+        "的", "地", "得",
+        "了", "着", "过",
+        "和", "与", "及",
+        "把", "被"
+    }
+
+    for word in word_count:
+
+        if len(word) == 2:
+            if word[0] in stop_char or word[-1] in stop_char:
+                continue
     high_words = {}
 
     for word in word_count:
@@ -111,17 +123,17 @@ def high_probability(pro, pmi_threshold, entropy_threshold):
     return high_words
 
 
-print("出现次数:", word_count["匆匆忙忙"])
-print("左:", left_neighbors["匆匆忙忙"][:10])
-print("右:", right_neighbors["匆匆忙忙"][:10])
+# print("出现次数:", word_count["说"])
+# print("左:", left_neighbors["说"][:10])
+# print("右:", right_neighbors["说"][:10])
 
-print("概率:", pro.get("匆匆"))
-print("概率:", pro.get("忙忙"))
-print("概率:", pro.get("匆匆忙忙"))
-print("PMI:", calc_pmi("匆匆忙忙", pro))
+# print("概率:", pro.get("说"))
+# print("概率:", pro.get("忙忙"))
+# print("概率:", pro.get("匆匆忙忙"))
+# print("PMI:", calc_pmi("匆匆忙忙", pro))
 
-print("左熵:", entropy(left_neighbors["匆匆忙忙"]))
-print("右熵:", entropy(right_neighbors["匆匆忙忙"]))
+# print("左熵:", entropy(left_neighbors["匆匆忙忙"]))
+# print("右熵:", entropy(right_neighbors["匆匆忙忙"]))
 
 pmi_threshold = 3
 entropy_threshold = 0.8
@@ -206,5 +218,53 @@ def find_words(text: str) -> list[str]:
 with open("dictionary.json", "w", encoding="utf-8") as f:
     json.dump(high_words, f, ensure_ascii=False, indent=4)
 
-print("匆匆忙忙" in high_words)
-print(high_words.get("匆匆忙忙"))
+# print("地" in high_words)
+# print(high_words.get("匆匆忙忙"))
+# print("地说" in high_words)
+# print(word_count["地说"])
+
+
+def score(word):
+    if word not in pro:
+        return 0
+
+    pmi = calc_pmi(word, pro)
+    if pmi is None:
+        pmi = 0
+
+    return pmi * len(word)
+
+
+def segment(text):
+
+    n = len(text)
+    dp = [float("-inf")] * (n + 1)
+    path = [None] * (n + 1)
+
+    dp[0] = 0
+
+    for i in range(1, n + 1):
+
+        for j in range(0, i):
+
+            word = text[j:i]
+
+            s = score(word)
+
+            if dp[j] + s > dp[i]:
+                dp[i] = dp[j] + s
+                path[i] = j
+
+    result = []
+    i = n
+
+    while i > 0 and path[i] is not None:
+        j = path[i]
+        result.append(text[j:i])
+        i = j
+
+    return result[::-1]
+
+
+print(segment("研究生命起源"))
+print(segment("昨天留下来的脚印已经被雪覆盖"))
